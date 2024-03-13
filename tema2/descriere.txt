@@ -1,0 +1,105 @@
+Client/Server: Mobile Application (Client) communicates with Producer Backend (Server).
+
+Communication Flow: Mobile App communicates with both Producer Backend and Car. Producer Backend communicates with both Mobile App and Car. Car communicates with both Producer Backend and Mobile App.
+
+Scope:
+   - Mobile Application: User-facing app for car booking, management, and communication.
+   - Producer Backend: Centralized system managing users, cars, bookings, payments, and communication        between app and cars.
+   - Car: Physical vehicle capable to communicate and receive commands and send status updates.
+
+Message Exchanges: Requests for car availability, booking, payment, status updates, lock/unlock, and engine start/stop commands.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+***Entities
+
+Mobile Application (Client): This is the interface used by users to access the carsharing service.
+
+Producer Backend (Server): The centralized system that manages the operations of the carsharing service, including user data, car availability, bookings, payments, etc.
+
+Car: The physical vehicle available for users to rent.
+
+***Who communicates with who
+
+- Mobile Application (Client) communicates with:
+  Producer Backend (Server): To request car availability, make bookings, process payments, etc.
+  Car: To lock/unlock the car, start the engine, etc.
+
+- Producer Backend (Server) communicates with:
+  Mobile Application (Client): To send car availability, booking confirmation, payment confirmation, etc.
+  Car: To send lock/unlock commands, start/stop engine commands, receive status updates, etc.
+
+- Car communicates with:
+  Producer Backend (Server): To send status updates (e.g., location, fuel level, mileage), receive commands (lock/unlock, start/stop engine), etc.
+  Mobile Application (Client): To receive car availability, provide status updates (e.g., location, battery level), receive commands (lock/unlock, start/stop engine), etc.
+
+
+***Components Scope:
+
+Mobile Application (Client):
+
+User authentication and registration
+Viewing available cars
+Booking a car
+Payment processing
+Communicating with the car (lock/unlock, start/stop engine)
+Viewing trip history and details
+
+
+Producer Backend (Server):
+
+User management (profiles, authentication)
+Car management (availability, location, status)
+Booking management (creation, confirmation, cancellation)
+Payment processing and management
+Communication between mobile app and cars
+Reporting and analytics
+
+
+Car:
+
+Receiving commands from the backend (lock/unlock, start/stop engine)
+Sending status updates (location, fuel level, mileage) to the backend
+Receiving commands from the mobile app (lock/unlock, start/stop engine)
+Sending status updates (location, battery level) to the mobile app
+
+
+

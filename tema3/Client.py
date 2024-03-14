@@ -1,4 +1,5 @@
 import socket
+from server.client import Client
 
 MESSAGE_TYPES = {
     0: "register Rentee",
@@ -8,30 +9,56 @@ MESSAGE_TYPES = {
     4: "startRental",
     5: "endRental"
 }
-def main ():
+
+
+def send_formatted_message(client_socket, messages):
+    message = concatenate_message(messages)
+    send_message(client_socket, message)
+
+
+def concatenate_message(messages):
+    return "|".join(messages)
+
+
+def send_message(client_socket, message):
+    client_socket.sendall(message.encode())
+    # data = client_socket.recv(1024)
+    # print('Received from server:', data.decode())
+
+
+def login(client_socket):
+    username = input("Enter username: ")
+    password = input("Enter password: ")
+    send_formatted_message(client_socket, [username, password])
+    succes = client_socket.recv(1024)
+    if succes.decode() == "True":
+        print("Login succesful")
+        return True
+    else:
+        print("Login failed")
+        return False
+
+
+def main_loop(client_socket):
+    menu = client_socket.recv(1024)
+    print(menu.decode())
+    choice = input("Enter your choice: ")
+    send_message(client_socket, choice)
+
+
+def main():
     server_host = 'localhost'
     server_port = 12345
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((server_host, server_port))
+    is_login = False
+
+    while not is_login:
+        is_login = login(client_socket)
 
     while True:
-        try:
-            client_id = int(input("Enter your client ID (0 for Owner, 1 for Renter): "))
-            if client_id not in (0, 1):
-                print("Invalid client ID. Please enter 0 or 1.")
-                continue
-            message_id = int(input(f"Enter message ID (0-5): \n{MESSAGE_TYPES}\n"))
-            if message_id not in MESSAGE_TYPES:
-                print("Invalid message ID. Please enter a number between 0 and 5.")
-                continue
-            payload = input("Enter payload: ")
-            message = f"{client_id}|{message_id}|{payload}"
-            client_socket.sendall(message.encode())
-            data = client_socket.recv(1024)
-            print('Received from server:', data.decode())
-        except ValueError:
-            print("Invalid input. Please enter valid integers for client ID and message ID.")
+        main_loop(client_socket)
 
     client_socket.close()
 

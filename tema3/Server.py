@@ -1,6 +1,8 @@
 import socket
 import threading
 
+from server.client import Client
+
 MESSAGE_TYPES = {
     0: "register Rentee",
     1: "register Owner",
@@ -10,37 +12,27 @@ MESSAGE_TYPES = {
     5: "endRental"
 }
 
+
 def check_permission(client_id, message_id):
-    if client_id == 0: # Owner
+    if client_id == 0:  # Owner
         return message_id in (1, 2)
-    elif client_id == 1: # Renter
+    elif client_id == 1:  # Renter
         return message_id in (0, 3, 4, 5)
     else:
         return False
 
-def handle_client(client_socket):
-    while True:
-        data = client_socket.recv(1024)
-        if not data:
-            break
-        try:
-            client_id, message_id, payload = data.decode().split("|", 2)
-            client_id = int(client_id.strip())
-            message_id = int(message_id.strip())
-            if message_id not in MESSAGE_TYPES:
-                response = "Invalid message ID"
-            else:
-                print(f"Received {MESSAGE_TYPES[message_id]}: {payload.strip()}")
-                if not check_permission(client_id, message_id):
-                    print(client_id, message_id, check_permission(client_id, message_id))
-                    response = "Permission denied"
-                else:
-                    response = f"Received {MESSAGE_TYPES[message_id]}"
 
+def handle_client(client_socket):
+    client = Client(client_socket)
+    while True:
+        try:
+            client.login()
+            if client.is_owner:
+                client.owner_menu()
+            else:
+                client.renter_menu()
         except ValueError:
-            response = "Invalid message format"
-        client_socket.sendall(response.encode())
-    client_socket.close()
+            print("Invalid input. Please enter valid integers for client ID and message ID.")
 
 
 def main():
